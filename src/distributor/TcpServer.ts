@@ -1,18 +1,18 @@
 import * as net from 'net';
 import TcpClient from './TcpClient';
 import { DistributorContext, DistributorPacket } from '../types';
-import { isLastIdx, lastCharFor } from '../utils';
+import { isLastIdxFor, lastCharFor, PACKET_SEP, nodeKeyFor } from '../utils';
 
 export default class TcpServer {
-  private context: DistributorContext | undefined;
-  private merge: { [key: string]: string } = {};
+  private context: DistributorContext;
+  private merge: { [serviceKey: string]: string } = {};
   private server: net.Server | undefined;
   private clientDistributor: TcpClient | undefined;
 
   constructor(
     private name: string,
     private port: number,
-    private urls: string[]
+    private urls: string[] // 처리가능한 URI 목록
   ) {
     this.context = { name, port, urls };
     this.merge = {};
@@ -34,13 +34,11 @@ export default class TcpServer {
 
       // 데이터 수신 이벤트
       socket.on('data', (data) => {
-        const key = `${socket.remoteAddress}:${socket.remotePort}`;
-        const sz = this.merge[key]
-          ? this.merge[key] + data.toString()
-          : data.toString();
-        const arr = sz.split('¶');
+        const key = nodeKeyFor(socket);
+        const sz = (this.merge[key] || '') + data.toString();
+        const arr = sz.split(PACKET_SEP);
         for (const idx in arr) {
-          if (lastCharFor(sz) !== '¶' && isLastIdx(+idx, arr.length - 1)) {
+          if (lastCharFor(sz) !== PACKET_SEP && isLastIdxFor(arr, +idx)) {
             this.merge[key] = arr[idx];
             break;
           } else if (arr[idx] === '') {
@@ -78,27 +76,23 @@ export default class TcpServer {
     };
     let isConnectedDistributor = false;
 
-    this.clientDistributor = new TcpClient(
+    this.clientDistributor = new TcpClient({
       host,
       port,
-      //  onCreate
-      (options) => {
+      onCreate: (options) => {
         isConnectedDistributor = true;
         this.clientDistributor?.write(packet);
       },
-      // onRead
-      (options, data) => {
+      onRead: (options, data) => {
         onNoti(data);
       },
-      // onEnd
-      (options) => {
+      onEnd: (options) => {
         isConnectedDistributor = false;
       },
-      // onError
-      (options, error) => {
+      onError: (options, error) => {
         isConnectedDistributor = false;
-      }
-    );
+      },
+    });
 
     // 주기적으로 재접속
     setInterval(() => {

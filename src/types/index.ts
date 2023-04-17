@@ -6,9 +6,9 @@ export type ServiceNode = {
 };
 
 export type ServiceNodePacket = {
+  key: number;
   uri: string;
   method: string;
-  key: number;
   params: ServiceNode[];
 };
 
@@ -19,8 +19,8 @@ export type DistributorContext = {
 };
 
 export type DistributorPacket = {
+  key: number;
   uri: string;
   method: string;
-  key: number;
-  params: DistributorContext | ServiceNode[] | undefined;
+  params: DistributorContext;
 };

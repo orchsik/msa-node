@@ -1,6 +1,7 @@
 import * as net from 'net';
 import TcpServer from './TcpServer';
 import { ServiceNode, ServiceNodePacket } from '../types';
+import { PACKET_SEP, nodeKeyFor } from '../utils';
 
 // 접속 노드 관리 오브젝트
 const nodeMap: {
@@ -20,7 +21,7 @@ export default class Distributor extends TcpServer {
 
   // 노드 접속 해제 이벤트 처리
   protected onClose(socket: net.Socket): void {
-    const key = `${socket.remoteAddress}:${socket.remotePort}`;
+    const key = nodeKeyFor(socket);
     console.log('onClose', socket.remoteAddress, socket.remotePort);
     delete nodeMap[key];
     this.sendInfo();
@@ -28,7 +29,7 @@ export default class Distributor extends TcpServer {
 
   // 노드 등록 처리
   protected onRead(socket: net.Socket, json: any) {
-    const key = `${socket.remoteAddress}:${socket.remotePort}`;
+    const key = nodeKeyFor(socket);
     console.log('onRead', socket.remoteAddress, socket.remotePort, json);
 
     // 접속 노드 정보 등록
@@ -42,7 +43,7 @@ export default class Distributor extends TcpServer {
   }
 
   private write(socket: net.Socket, packet: ServiceNodePacket) {
-    socket.write(JSON.stringify(packet) + '¶');
+    socket.write(JSON.stringify(packet) + PACKET_SEP);
   }
 
   // 접속 노드 혹은 특정 소켓에 접속 노드 정보 전파
