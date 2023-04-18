@@ -10,3 +10,8 @@ yarn tsc --init --rootDir src --outDir ./bin --esModuleInterop --lib ES2015 --mo
 ```bash
 yarn tsc
 ```
+
+## mssql with docker
+```bash
+sh .sh/run-mssql.sh
+```
