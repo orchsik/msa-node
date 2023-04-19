@@ -1,0 +1,26 @@
+CREATE TABLE goods (
+  id INT NOT NULL IDENTITY(1,1) 
+  , name VARCHAR(128) NOT NULL
+  , category VARCHAR(128) NOT NULL
+  , price INT NOT NULL
+  , description TEXT NOT NULL
+  , CONSTRAINT PK_goods PRIMARY KEY CLUSTERED (id)
+)
+GO
+
+CREATE TABLE members (
+  id INT NOT NULL IDENTITY(1,1)
+  , username VARCHAR(128) NOT NULL
+  , password VARCHAR(128) NOT NULL
+  , CONSTRAINT PK_members PRIMARY KEY CLUSTERED (id)
+  , CONSTRAINT UK_members UNIQUE (username)
+)
+GO
+
+CREATE TABLE purchases (
+  id INT NOT NULL IDENTITY(1,1)
+  , userid INT NOT NULL
+  , goodsid INT NOT NULL
+  , date DATETIME NOT NULL DEFAULT GETDATE()
+  , CONSTRAINT PK_purchase PRIMARY KEY CLUSTERED (id)
+)

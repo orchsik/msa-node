@@ -9,9 +9,11 @@
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
   },
   "dependencies": {
+    "mssql": "^9.1.1",
     "net": "^1.0.2"
   },
   "devDependencies": {
+    "@types/mssql": "^8.1.2",
     "@types/node": "^18.15.11",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
