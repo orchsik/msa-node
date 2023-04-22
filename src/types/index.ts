@@ -1,4 +1,5 @@
 import * as net from 'net';
+import http from 'http';
 
 export type ServiceNode = {
   socket: net.Socket;
@@ -24,3 +25,7 @@ export type DistributorPacket = {
   method: string;
   params: DistributorContext;
 };
+
+export type httpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type Params = Record<string, any>;
+export type Response = (res: http.ServerResponse, packet: any) => void;

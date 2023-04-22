@@ -1,5 +1,3 @@
-import Database from './utils/DB';
-import Distributor from './distributor/Distributor';
-
-Database.getPool();
-const distributor = new Distributor();
+import './utils/DB';
+import './monolithic/monolithic';
+import './distributor/Distributor';
