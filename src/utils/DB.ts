@@ -1,4 +1,9 @@
-import sql from 'mssql';
+import sql, { IRecordSet } from 'mssql';
+
+type QueryResponse<T> = {
+  data?: IRecordSet<T>[];
+  error?: any;
+};
 
 const config: sql.config = {
   server: '127.0.0.1',
@@ -20,21 +25,41 @@ const config: sql.config = {
 };
 
 class Database {
-  public static _pool: sql.ConnectionPool;
+  private static _pool: sql.ConnectionPool;
 
-  public static async getPool(): Promise<sql.ConnectionPool | undefined> {
+  public static async getPool(): Promise<sql.ConnectionPool> {
+    if (!this._pool) {
+      this._pool = await new sql.ConnectionPool(config).connect();
+      console.log('Connected to MSSQL');
+    }
+    return this._pool;
+  }
+
+  public static async query<T = any>(
+    query: string,
+    params?: Object
+  ): Promise<QueryResponse<T>> {
     try {
-      if (!this._pool) {
-        this._pool = await new sql.ConnectionPool(config).connect();
-        console.log(this._pool);
-      }
-      return this._pool;
+      const pool = await this.getPool();
+      const request = pool.request();
+
+      Object.entries(params || {}).forEach(([key, value]) => {
+        request.input(key, value);
+      });
+
+      const result = await request.query(query);
+      const recordsets = result.recordsets as IRecordSet<T>[];
+      return { data: recordsets };
     } catch (error) {
-      console.log(error);
+      console.error('[FAILURE] QUERY', error);
+      return { error };
     }
   }
 
-  public static async query(query: string, params?: Object): Promise<any> {
+  public static async ps<T = any>(
+    query: string,
+    params?: Object
+  ): Promise<QueryResponse<T>> {
     try {
       const pool = await this.getPool();
       const ps = new sql.PreparedStatement(pool);
@@ -45,14 +70,16 @@ class Database {
 
       await ps.prepare(query);
       const result = await ps.execute(params || {});
+      const recordsets = result.recordsets as IRecordSet<T>[];
       await ps.unprepare();
 
-      return result.recordsets;
+      return { data: recordsets };
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error('[FAILURE] preparedStatement', error);
+      return { error };
     }
   }
 }
 
+Database.getPool();
 export default Database;
