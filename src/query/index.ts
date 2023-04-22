@@ -28,6 +28,19 @@ const deleteGoods = `
   DELETE FROM goods WHERE id = @id
 `;
 
+const insertPurchase = `
+  INSERT INTO purchases
+  (userid, goodsid)
+  VALUES
+  (@userid, @goodsid)
+`;
+
+const getPurchase = `
+  SELECT id, goodsid, date
+  FROM purchases
+  WHERE userid = @userid
+`;
+
 const QUERY = {
   postUser,
   getUser,
@@ -36,6 +49,9 @@ const QUERY = {
   postGoods,
   getGoods,
   deleteGoods,
+  //
+  insertPurchase,
+  getPurchase,
 };
 
 export default QUERY;

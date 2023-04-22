@@ -6,6 +6,7 @@ import { Params, httpMethod } from '../types';
 import { HTTP_SERVER_PORT } from '../config';
 import members from './monolithic_members';
 import goods from './monolithic_goods';
+import purchases from './monolithic_purchases';
 
 const server = http
   .createServer((req, res) => {
@@ -79,6 +80,13 @@ const onRequest = (
       });
       break;
     case '/purchases':
+      purchases.onRequest({
+        res,
+        method,
+        pathname,
+        params,
+        handleResponse,
+      });
       break;
     default:
       res.writeHead(404);
