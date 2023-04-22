@@ -38,46 +38,36 @@ class Database {
   public static async query<T = any>(
     query: string,
     params?: Object
-  ): Promise<QueryResponse<T>> {
-    try {
-      const pool = await this.getPool();
-      const request = pool.request();
+  ): Promise<IRecordSet<T>[]> {
+    const pool = await this.getPool();
+    const request = pool.request();
 
-      Object.entries(params || {}).forEach(([key, value]) => {
-        request.input(key, value);
-      });
+    Object.entries(params || {}).forEach(([key, value]) => {
+      request.input(key, value);
+    });
 
-      const result = await request.query(query);
-      const recordsets = result.recordsets as IRecordSet<T>[];
-      return { data: recordsets };
-    } catch (error) {
-      console.error('[FAILURE] QUERY', error);
-      return { error };
-    }
+    const result = await request.query(query);
+    const recordsets = result.recordsets as IRecordSet<T>[];
+    return recordsets;
   }
 
   public static async ps<T = any>(
     query: string,
     params?: Object
-  ): Promise<QueryResponse<T>> {
-    try {
-      const pool = await this.getPool();
-      const ps = new sql.PreparedStatement(pool);
+  ): Promise<IRecordSet<T>[]> {
+    const pool = await this.getPool();
+    const ps = new sql.PreparedStatement(pool);
 
-      Object.entries(params || {}).forEach(([key, value]) => {
-        ps.input(key, value);
-      });
+    Object.entries(params || {}).forEach(([key, value]) => {
+      ps.input(key, value);
+    });
 
-      await ps.prepare(query);
-      const result = await ps.execute(params || {});
-      const recordsets = result.recordsets as IRecordSet<T>[];
-      await ps.unprepare();
+    await ps.prepare(query);
+    const result = await ps.execute(params || {});
+    const recordsets = result.recordsets as IRecordSet<T>[];
+    await ps.unprepare();
 
-      return { data: recordsets };
-    } catch (error) {
-      console.error('[FAILURE] preparedStatement', error);
-      return { error };
-    }
+    return recordsets;
   }
 }
 

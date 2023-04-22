@@ -60,10 +60,10 @@ const inquiry = async (
       password: params.password,
     });
 
-    if (result.error || result.data?.[0].length === 0) {
+    if (result[0].length === 0) {
       throw new Error('Invalid password');
     }
-    response.userid = result.data?.[0][0].id;
+    response.userid = result[0][0].id;
   } catch (error: any) {
     response.errorcode = 1;
     response.errormessage = error.message;

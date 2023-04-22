@@ -4,6 +4,9 @@ import { Params, httpMethod } from '../types';
 import { isGoodsGetDto } from '../types/Goods';
 import Database from '../utils/DB';
 
+/**
+ * POST /goods
+ */
 const register = async (
   method: httpMethod,
   pathname: string,
@@ -33,6 +36,9 @@ const register = async (
   handleResponse(response);
 };
 
+/**
+ * GET /goods
+ */
 const inquiry = async (
   method: httpMethod,
   pathname: string,
@@ -53,10 +59,10 @@ const inquiry = async (
       price: params.price,
       description: params.description,
     });
-    if (result.error || result.data?.[0].length === 0) {
+    if (result.length === 0) {
       throw Error('No data');
     }
-    response.results = result.data?.[0] || [];
+    response.results = result[0];
   } catch (e: any) {
     response.errorcode = 1;
     response.errormessage = e.message;
@@ -64,6 +70,9 @@ const inquiry = async (
   handleResponse(response);
 };
 
+/**
+ * DELETE /goods?id=1
+ */
 const unregister = async (
   method: httpMethod,
   pathname: string,

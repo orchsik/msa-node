@@ -4,6 +4,9 @@ import { Params, httpMethod } from '../types';
 import { isPurchaseGetDto } from '../types/Purchase';
 import Database from '../utils/DB';
 
+/**
+ * POST /purchases
+ */
 const register = async (
   method: httpMethod,
   pathname: string,
@@ -31,6 +34,9 @@ const register = async (
   handleResponse(response);
 };
 
+/**
+ * GET /purchases?userid=1
+ */
 const inquiry = async (
   method: httpMethod,
   pathname: string,
