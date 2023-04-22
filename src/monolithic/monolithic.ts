@@ -1,9 +1,11 @@
 import http from 'http';
 import url from 'url';
 import querystring from 'querystring';
-import members from './monolithic_members';
+
 import { Params, httpMethod } from '../types';
 import { HTTP_SERVER_PORT } from '../config';
+import members from './monolithic_members';
+import goods from './monolithic_goods';
 
 const server = http
   .createServer((req, res) => {
@@ -68,6 +70,13 @@ const onRequest = (
       });
       break;
     case '/goods':
+      goods.onRequest({
+        res,
+        method,
+        pathname,
+        params,
+        handleResponse,
+      });
       break;
     case '/purchases':
       break;
