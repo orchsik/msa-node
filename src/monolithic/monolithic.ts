@@ -7,6 +7,7 @@ import { HTTP_SERVER_PORT } from '../config';
 import members from './monolithic_members';
 import goods from './monolithic_goods';
 import purchases from './monolithic_purchases';
+import { handleServerResponse } from '../utils';
 
 const server = http
   .createServer((req, res) => {
@@ -37,16 +38,6 @@ const server = http
   });
 
 /**
- * HTTP 헤더에 JSON 형식으로 응답
- * @param res - HTTP 응답 객체
- * @param packet - 응답 데이터
- */
-const handleResponse = (res: http.ServerResponse, packet: any) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(packet));
-};
-
-/**
  * 요청에 대해 회원관리 상품관리 구매관리 모듈별로 분기
  * @param res - HTTP 응답 객체
  * @param method - HTTP 메서드
@@ -67,7 +58,7 @@ const onRequest = (
         method,
         pathname,
         params,
-        handleResponse,
+        handleResponse: handleServerResponse,
       });
       break;
     case '/goods':
@@ -76,7 +67,7 @@ const onRequest = (
         method,
         pathname,
         params,
-        handleResponse,
+        handleResponse: handleServerResponse,
       });
       break;
     case '/purchases':
@@ -85,7 +76,7 @@ const onRequest = (
         method,
         pathname,
         params,
-        handleResponse,
+        handleResponse: handleServerResponse,
       });
       break;
     default:

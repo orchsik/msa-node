@@ -1,8 +1,9 @@
-import { ServerResponse } from 'http';
+import * as net from 'net';
 import { Params, httpMethod } from '../types';
 import Database from '../utils/DB';
 import QUERY from '../query';
 import { isUserGetDto } from '../types/User';
+import { HandleServerResponse, ServerResponse } from '../utils';
 
 /**
  * POST /members
@@ -105,11 +106,11 @@ const onRequest = ({
   params,
   handleResponse,
 }: {
-  res: ServerResponse;
+  res: ServerResponse | net.Socket;
   method: httpMethod;
   pathname: string;
   params: Params;
-  handleResponse: Function;
+  handleResponse: HandleServerResponse;
 }) => {
   switch (method) {
     case 'POST':

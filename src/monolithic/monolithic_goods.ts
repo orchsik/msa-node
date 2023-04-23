@@ -1,7 +1,7 @@
-import { ServerResponse } from 'http';
 import QUERY from '../query';
 import { Params, httpMethod } from '../types';
 import { isGoodsGetDto } from '../types/Goods';
+import { HandleServerResponse, ServerResponse } from '../utils';
 import Database from '../utils/DB';
 
 /**
@@ -110,7 +110,7 @@ const onRequest = ({
   method: httpMethod;
   pathname: string;
   params: Params;
-  handleResponse: Function;
+  handleResponse: HandleServerResponse;
 }) => {
   switch (method) {
     case 'POST':
