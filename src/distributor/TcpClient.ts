@@ -7,6 +7,9 @@ type OnRead = (options: net.NetConnectOpts, data: any) => void;
 type OnEnd = (options: net.NetConnectOpts) => void;
 type OnError = (options: net.NetConnectOpts, error: any) => void;
 
+/**
+ * "접속", "데이터 수신", "데이터 발송" 세 가지 기능으로 구성한다.
+ */
 export default class TcpClient {
   private options: net.NetConnectOpts;
   private onCreate: OnCreate;
@@ -49,15 +52,15 @@ export default class TcpClient {
     // 데이터 수신 처리
     this.client.on('data', (data) => {
       const sz = this.merge ? this.merge + data.toString() : data.toString();
-      const arr = sz.split(PACKET_SEP);
-      for (const idx in arr) {
-        if (lastCharFor(sz) !== PACKET_SEP && isLastIdxFor(arr, +idx)) {
-          this.merge = arr[idx];
+      const packets = sz.split(PACKET_SEP);
+      for (const idx in packets) {
+        if (lastCharFor(sz) !== PACKET_SEP && isLastIdxFor(packets, +idx)) {
+          this.merge = packets[idx];
           break;
-        } else if (arr[idx] === '') {
+        } else if (packets[idx] === '') {
           break;
         } else {
-          this.onRead(this.options, JSON.parse(arr[idx]));
+          this.onRead(this.options, JSON.parse(packets[idx]));
         }
       }
     });

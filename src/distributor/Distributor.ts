@@ -2,15 +2,24 @@ import * as net from 'net';
 import TcpServer from './TcpServer';
 import { ServiceNode, ServiceNodePacket } from '../types';
 import { PACKET_SEP, nodeKeyFor } from '../utils';
+import { DISTRIBUTOR_PORT } from '../config';
 
 // 접속 노드 관리 오브젝트
 const nodeMap: {
   [key: string]: ServiceNode;
 } = {};
 
+/**
+ * 노드가 접속하면 접속한 노드에 현재 접속 중인 다른 노드의
+ * 정보를 제공하고, 노드 접속이 종료되면 다른 접속된 노드에 전파
+ * 하는 기능.
+ */
 export default class Distributor extends TcpServer {
   constructor() {
-    super('distributor', 9000, ['POST/distributes', 'GET/distributes']);
+    super('distributor', DISTRIBUTOR_PORT, [
+      'POST/distributes',
+      'GET/distributes',
+    ]);
   }
 
   // 노드 점속 이벤트

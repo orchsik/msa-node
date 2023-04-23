@@ -3,6 +3,10 @@ import TcpClient from './TcpClient';
 import { DistributorContext, DistributorPacket } from '../types';
 import { isLastIdxFor, lastCharFor, PACKET_SEP, nodeKeyFor } from '../utils';
 
+/**
+ * "리슨", "데이터 수신", "클라이언트 접속 관리" 외에
+ * 앞에서 만든 TcpClient를 이용하여 Distributor에 접속하는 기능을 추가한다.
+ */
 export default class TcpServer {
   private context: DistributorContext;
   private merge: { [serviceKey: string]: string } = {};
@@ -36,15 +40,15 @@ export default class TcpServer {
       socket.on('data', (data) => {
         const key = nodeKeyFor(socket);
         const sz = (this.merge[key] || '') + data.toString();
-        const arr = sz.split(PACKET_SEP);
-        for (const idx in arr) {
-          if (lastCharFor(sz) !== PACKET_SEP && isLastIdxFor(arr, +idx)) {
-            this.merge[key] = arr[idx];
+        const packets = sz.split(PACKET_SEP);
+        for (const idx in packets) {
+          if (lastCharFor(sz) !== PACKET_SEP && isLastIdxFor(packets, +idx)) {
+            this.merge[key] = packets[idx];
             break;
-          } else if (arr[idx] === '') {
+          } else if (packets[idx] === '') {
             break;
           } else {
-            this.onRead(socket, JSON.parse(arr[idx]));
+            this.onRead(socket, JSON.parse(packets[idx]));
           }
         }
       });
@@ -62,7 +66,7 @@ export default class TcpServer {
   }
 
   // Distributor에 접속
-  public connectToDistributor(
+  protected connectToDistributor(
     host: string,
     port: number,
     onNoti: (data: any) => void

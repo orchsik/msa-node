@@ -1,4 +1,5 @@
 import sql, { IRecordSet } from 'mssql';
+import { HOST } from '../config';
 
 type QueryResponse<T> = {
   data?: IRecordSet<T>[];
@@ -6,7 +7,7 @@ type QueryResponse<T> = {
 };
 
 const config: sql.config = {
-  server: '127.0.0.1',
+  server: HOST,
   port: 1401,
   database: 'test',
   user: 'sa',
