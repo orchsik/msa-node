@@ -1,5 +1,7 @@
 export const HOST = '127.0.0.1';
 
+export const DB_PORT = 1401;
+
 export const HTTP_SERVER_PORT = 8000;
 
 export const DISTRIBUTOR_PORT = 9000;

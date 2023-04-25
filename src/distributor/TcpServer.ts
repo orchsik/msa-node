@@ -61,7 +61,7 @@ export default class TcpServer {
 
     // 서버 리슨 이벤트
     this.server.listen(this.port, () => {
-      console.log('listen', this.port);
+      console.log('TcpServer listen', this.port);
     });
   }
 

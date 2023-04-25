@@ -40,7 +40,7 @@ const gateServer = http
     }
   })
   .listen(HTTP_SERVER_PORT, () => {
-    console.log(`Gateway Server is running on port ${gateServer.address()}`);
+    console.log(`Gateway Server LISTEN`, HTTP_SERVER_PORT);
 
     const packet: DistributorPacket = {
       uri: '/distributes',

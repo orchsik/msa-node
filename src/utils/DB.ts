@@ -1,14 +1,9 @@
 import sql, { IRecordSet } from 'mssql';
-import { HOST } from '../config';
-
-type QueryResponse<T> = {
-  data?: IRecordSet<T>[];
-  error?: any;
-};
+import { DB_PORT, HOST } from '../config';
 
 const config: sql.config = {
   server: HOST,
-  port: 1401,
+  port: DB_PORT,
   database: 'test',
   user: 'sa',
   password: 'A!123456',
@@ -31,7 +26,7 @@ class Database {
   public static async getPool(): Promise<sql.ConnectionPool> {
     if (!this._pool) {
       this._pool = await new sql.ConnectionPool(config).connect();
-      console.log('Connected to MSSQL');
+      console.log('Connected to MSSQL', DB_PORT);
     }
     return this._pool;
   }
